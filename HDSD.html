@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Sử Dụng - Quản Lý Lịch Làm Việc</title>
+    <style>
+        :root {
+            --primary-color: #1E90FF;
+            --bg-color: #f4f7f6;
+            --sidebar-color: #2c3e50;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-color);
+            color: var(--white);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #34495e;
+            margin: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            padding: 15px 25px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #34495e;
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        section {
+            background: var(--white);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        h1 { color: var(--sidebar-color); border-bottom: 3px solid var(--primary-color); padding-bottom: 10px; }
+        h2 { color: var(--primary-color); margin-top: 0; }
+        h3 { color: #e67e22; }
+
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffecb5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        code {
+            background-color: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th { background-color: #f8f9fa; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 20px; }
+            body { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>📑 Quản Lý Lịch</h2>
+        <ul>
+            <li><a href="#intro">1. Giới thiệu chung</a></li>
+            <li><a href="#setup">2. Hướng dẫn cài đặt</a></li>
+            <li><a href="#security">3. Đăng nhập & Bảo mật</a></li>
+            <li><a href="#workflow">4. Quy trình nghiệp vụ</a></li>
+            <li><a href="#report">5. Báo cáo & Thống kê</a></li>
+            <li><a href="#utilities">6. Công cụ & Tiện ích</a></li>
+            <li><a href="#theme">7. Tùy biến giao diện</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Hướng Dẫn Sử Dụng Hệ Thống</h1>
+        </header>
+
+        <section id="intro">
+            <h2>1. Giới thiệu chung</h2>
+            <p>Phần mềm Quản lý lịch làm việc được thiết kế để tối ưu hóa việc sắp xếp thời gian, phân công nhân sự và theo dõi tiến độ công việc trong doanh nghiệp. Hệ thống sử dụng công nghệ Entity Framework Core để quản lý dữ liệu một cách đồng bộ và chính xác.</p>
+        </section>
+
+        <section id="setup">
+            <h2>2. Hướng dẫn cài đặt</h2>
+            <p>Dành cho quản trị viên triển khai hệ thống:</p>
+            <ul>
+                <li><strong>Khôi phục thư viện:</strong> Mở Developer Command Prompt, dùng lệnh <code>MSBuild /t:restore</code>.</li>
+                <li><strong>Cấu hình CSDL:</strong> Cập nhật chuỗi kết nối trong file <code>App.config</code>.</li>
+                <li><strong>Cập nhật Database:</strong> Chạy lệnh <code>Update-Database</code> để khởi tạo các bảng.</li>
+            </ul>
+        </section>
+
+        <section id="security">
+            <h2>3. Đăng nhập & Bảo mật</h2>
+            <h3>Đăng nhập hệ thống</h3>
+            <p>Người dùng truy cập bằng tài khoản được cấp phát. Có thể nhấn phím <code>Enter</code> để thực hiện đăng nhập nhanh.</p>
+            <h3>Bảo mật mật khẩu</h3>
+            <p>Hệ thống sử dụng thuật toán mã hóa <strong>BCrypt</strong> hiện đại để bảo vệ mật khẩu người dùng. Người dùng có thể tự thay đổi mật khẩu định kỳ để tăng tính an toàn.</p>
+        </section>
+
+        <section id="workflow">
+            <h2>4. Quy trình nghiệp vụ cốt lõi</h2>
+            <p>Hệ thống vận hành theo chu trình khép kín giúp kiểm soát công việc từ lúc bắt đầu đến khi kết thúc:</p>
+            <ol>
+                <li><strong>Lập lịch làm việc:</strong> Khởi tạo sự kiện và chọn địa điểm phù hợp.</li>
+                <li><strong>Kiểm tra sức chứa:</strong> Hệ thống tự động cảnh báo nếu số lượng người dự kiến vượt quá khả năng đáp ứng của địa điểm.</li>
+                <li><strong>Phân công & Giao việc:</strong> Chỉ định nhân sự phụ trách và chia nhỏ công việc thành các đầu việc (Tasks) cụ thể.</li>
+                <li><strong>Tính toán tiến độ:</strong> Khi nhân viên tích chọn hoàn thành đầu việc, hệ thống tự động tính toán lại % tiến độ của toàn bộ lịch trình dựa trên số lượng công việc đã xong.</li>
+            </ol>
+        </section>
+
+        <section id="report">
+            <h2>5. Báo cáo & Thống kê</h2>
+            <p>Cung cấp các báo cáo chuyên nghiệp thông qua Microsoft ReportViewer:</p>
+            <ul>
+                <li><strong>Hiệu suất làm việc:</strong> Đánh giá tỷ lệ hoàn thành công việc của từng nhân viên dưới dạng phần trăm.</li>
+                <li><strong>Tiến độ tổng thể:</strong> Xem danh sách các lịch trình và mức độ hoàn thành tương ứng.</li>
+                <li><strong>Báo cáo chi tiết:</strong> Liệt kê cụ thể từng đầu việc đã hoàn thành hoặc còn tồn đọng.</li>
+            </ul>
+        </section>
+
+        <section id="utilities">
+            <h2>6. Công cụ & Tiện ích</h2>
+            <h3>Tìm kiếm thông minh</h3>
+            <p>Sử dụng bộ lọc LINQ đa năng, cho phép tìm kiếm bất kỳ thông tin nào trên bảng dữ liệu với tốc độ tức thời.</p>
+            <h3>Tương tác Excel</h3>
+            <p>Hỗ trợ nhập (Import) và xuất (Export) dữ liệu hàng loạt ra file Excel cho các phân hệ Nhân viên, Địa điểm, Lịch làm việc. Hệ thống có bảng log hiển thị chi tiết kết quả xử lý của từng dòng.</p>
+            <h3>Trợ giúp (F1)</h3>
+            <p>Nhấn phím <code>F1</code> tại bất kỳ màn hình nào để mở hướng dẫn trực tuyến hoặc gợi ý thao tác.</p>
+        </section>
+
+        <section id="theme">
+            <h2>7. Tùy biến giao diện</h2>
+            <p>Người dùng có thể cá nhân hóa môi trường làm việc thông qua màn hình Cài đặt:</p>
+            <ul>
+                <li><strong>Dark Mode:</strong> Chế độ nền tối giúp bảo vệ mắt và tăng tính tập trung.</li>
+                <li><strong>Màu chủ đề:</strong> Tự do chọn màu sắc chủ đạo cho toàn bộ hệ thống (nút bấm, tiêu đề bảng, thanh tiến trình).</li>
+            </ul>
+        </section>
+
+        <div class="footer">
+            <p>&copy; 2026 Hệ thống Quản Lý Lịch Làm Việc - Phát triển bởi Đức Trường</p>
+        </div>
+    </div>
+
+</body>
+</html>
