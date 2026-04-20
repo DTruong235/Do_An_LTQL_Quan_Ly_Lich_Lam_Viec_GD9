@@ -45,8 +45,8 @@ namespace Quan_Ly_Lich_Lam_Viec.Reports
 
                 reportViewer.LocalReport.DataSources.Clear();
                 reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DanhSachTienDoCongViec", (DataTable)dt));
-                //string rptPath = Path.Combine(Application.StartupPath, "Reports", "rptThongKeTienDoCongViec.rdlc");
-                string rptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Reports", "rptThongKeTienDoCongViec.rdlc");
+
+                string rptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "rptThongKeTienDoCongViec.rdlc");
                 rptPath = Path.GetFullPath(rptPath);
                 reportViewer.LocalReport.ReportPath = rptPath;
 

@@ -51,7 +51,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Reports
 
                 reportViewer.LocalReport.DataSources.Clear();
                 reportViewer.LocalReport.DataSources.Add(new Microsoft.Reporting.WinForms.ReportDataSource("DanhSachChiTietCongViec", (DataTable)dtChiTiet));
-                string rptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Reports", "rptThongKeChiTietCongViec.rdlc");
+                string rptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "rptThongKeChiTietCongViec.rdlc");
                 rptPath = Path.GetFullPath(rptPath);
                 reportViewer.LocalReport.ReportPath = rptPath;
 
