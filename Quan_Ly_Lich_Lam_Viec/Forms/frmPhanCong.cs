@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Quan_Ly_Lich_Lam_Viec.Data;
+using Quan_Ly_Lich_Lam_Viec.Helper;
 using System.Data;
 
 namespace Quan_Ly_Lich_Lam_Viec.Forms
@@ -163,7 +164,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                         return;
                     }
 
-                    // Bước B: Kiểm tra xung đột thời gian (Điểm cộng thực tế)
+                    // Bước B: Kiểm tra xung đột thời gian
                     if (KiemTraXungDotThoiGian(maNV, maLich)) return;
 
                     // Bước C: Tạo mới object và thêm vào context
@@ -270,6 +271,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private void frmPhanCong_Load(object sender, EventArgs e)
         {
+
             SetupGiaoDien(this);
 
             pcBindingSource.AddingNew += (s, ev) =>

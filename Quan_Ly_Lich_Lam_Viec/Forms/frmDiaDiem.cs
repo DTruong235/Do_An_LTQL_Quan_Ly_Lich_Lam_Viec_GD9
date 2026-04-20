@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Quan_Ly_Lich_Lam_Viec.Data;
+using Quan_Ly_Lich_Lam_Viec.Helper;
 
 namespace Quan_Ly_Lich_Lam_Viec.Forms
 {
@@ -26,6 +27,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private void LoadData()
         {
+
             context = new Quan_Li_Lich_Lam_DbContext();
             var listDD = context.Dia_Diem.ToList();
 

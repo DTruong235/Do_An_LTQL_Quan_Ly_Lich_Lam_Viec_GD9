@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Quan_Ly_Lich_Lam_Viec.Data;
+using Quan_Ly_Lich_Lam_Viec.Helper;
 using System.Data;
 
 namespace Quan_Ly_Lich_Lam_Viec.Forms
@@ -26,6 +27,31 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private void frmLichLamViec_Load(object sender, EventArgs e)
         {
+            DangKyValidationTxt(txtTieuDe, ValidateHelper.KiemTraTieuDe, "Tiêu đề phải chứa ít hơn 200 ký tự");
+
+            DangKyValidationNum(
+                numSoLuongDuKien,
+                (soLuongGoVao) =>
+                {
+
+                    if (cboDiaDiem.SelectedValue is int maDiaDiem)
+                    {
+                        var maDD = Convert.ToInt32(cboDiaDiem.SelectedValue);
+                        var phong = context.Dia_Diem.Find(maDD);
+                        if (phong != null)
+                        {
+                            return ValidateHelper.KiemTraSucChua(soLuongGoVao, phong.SucChua);
+                        }
+                    }
+                    return true;
+                },
+                "Số lượng người quá tải");
+
+            DangKyValidationCbo(cboDiaDiem, () => CheckDiaDiemHienTai(), "Địa điểm đã có lịch khác sử dụng trong khoảng thời gian này");
+            DangKyValidationDate(dtpBatDau, dtpKetThuc, (ngayBD, ngayKT) => ValidateHelper.KiemTraNgayThang(dtpBatDau.Value, dtpKetThuc.Value), "Ngày kết thúc phải lớn hơn ngày bắt đầu");
+
+
+
             SetupGiaoDien(this);
             BatTatChucNang(false); // Khóa các ô nhập khi mới mở
             LoadData(); // Tải dữ liệu lên
@@ -146,6 +172,70 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                 if (dataGridView.Columns[colName] != null) dataGridView.Columns[colName].Visible = false;
             }
 
+            err.Clear();
+        }
+
+        private bool KiemTraDuLieu()
+        {
+
+            if (string.IsNullOrWhiteSpace(txtTieuDe.Text))
+            {
+                MessageBox.Show("Tiêu đề lịch không được để trống!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtTieuDe.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtNoiDung.Text))
+            {
+                MessageBox.Show("Nội dung lịch không được để trống!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNoiDung.Focus();
+                return false;
+            }
+
+            if (!ValidateHelper.KiemTraTieuDe(txtTieuDe.Text))
+            {
+                MessageBox.Show("Tiêu đề lịch phải ít hơn 200 ký tự!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtTieuDe.Focus();
+                return false;
+            }
+
+            DateTime batDau = dtpBatDau.Value;
+            DateTime ketThuc = dtpKetThuc.Value;
+
+            if (!ValidateHelper.KiemTraNgayThang(batDau, ketThuc))
+            {
+                MessageBox.Show("Thời gian kết thúc phải lớn hơn thời gian bắt đầu!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            //Kiểm tra sức chứa
+            int maDD = Convert.ToInt32(cboDiaDiem.SelectedValue);
+            var phong = context.Dia_Diem.Find(maDD);
+
+            if (phong != null)
+            {
+                int soLuongDuKien = (int)numSoLuongDuKien.Value;
+
+                if (!ValidateHelper.KiemTraSucChua(soLuongDuKien, phong.SucChua))
+                {
+                    MessageBox.Show($"Số lượng dự kiến ({soLuongDuKien}) vượt quá sức chứa của địa điểm này! (Sức chứa tối đa: {phong.SucChua})", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    numSoLuongDuKien.Focus();
+                    return false;
+                }
+            }
+
+            //Kiểm tra trùng thời gian, nhân viên và địa điểm
+            if (MaDiaDiem != null)
+            {
+                if (!CheckDiaDiemHienTai())
+                {
+                    MessageBox.Show("Địa điểm này đã có lịch khác sử dụng trong khoảng thời gian này!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cboDiaDiem.Focus();
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -189,47 +279,13 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
         {
             try
             {
-                // 1. Kiểm tra dữ liệu đầu vào (Input Validation)
-                if (string.IsNullOrWhiteSpace(txtTieuDe.Text))
-                {
-                    MessageBox.Show("Tiêu đề lịch không được để trống!");
-                    return;
-                }
-
                 DateTime batDau = dtpBatDau.Value;
                 DateTime ketThuc = dtpKetThuc.Value;
 
-                if (batDau >= ketThuc)
-                {
-                    MessageBox.Show("Thời gian kết thúc phải lớn hơn thời gian bắt đầu!");
-                    return;
-                }
+                KiemTraDuLieu();
 
-                // 2. Kiểm tra trùng lịch (Business Validation)
                 int? maDiaDiem = cboDiaDiem.SelectedValue as int?;
                 int maLichHienTai = xuLyThem ? 0 : Convert.ToInt32(dataGridView.CurrentRow.Cells["MaLich"].Value);
-
-                if (maDiaDiem != null)
-                {
-                    // Kiểm tra trùng phòng (Overlap logic)
-
-
-                    if (!CheckDiaDiemHienTai())
-                    {
-                        MessageBox.Show("Địa điểm này đã có lịch khác sử dụng trong khoảng thời gian này!");
-                        return;
-                    }
-                }
-
-                if (maDiaDiem != null)
-                {
-                    var phong = context.Dia_Diem.Find(maDiaDiem);
-                    if (phong != null && numSoLuongDuKien.Value > phong.SucChua)
-                    {
-                        MessageBox.Show($"Số lượng dự kiến vượt quá sức chứa của địa điểm này! (Sức chứa: {phong.SucChua})");
-                        return;
-                    }
-                }
 
                 Lich_Lam_Viec lich;
                 if (xuLyThem)
@@ -316,6 +372,12 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private bool CheckDiaDiemHienTai()
         {
+            if (!btnLuu.Enabled)
+            {
+                err.Clear();
+                return true;
+            }
+
             if (cboDiaDiem.SelectedValue == null) return true;
 
             if (!(cboDiaDiem.SelectedValue is int maDD))
@@ -773,6 +835,13 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                     }
                 }
             }
+        }
+
+        private void cboDiaDiem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            decimal giaTriHienTai = numSoLuongDuKien.Value;
+            numSoLuongDuKien.Value = giaTriHienTai == 1 ? 2 : 1; // Đổi số giả
+            numSoLuongDuKien.Value = giaTriHienTai;
         }
     }
 }

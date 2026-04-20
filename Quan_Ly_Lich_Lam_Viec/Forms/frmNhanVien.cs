@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using Quan_Ly_Lich_Lam_Viec.Data;
+using Quan_Ly_Lich_Lam_Viec.Helper;
 
 
 namespace Quan_Ly_Lich_Lam_Viec.Forms
@@ -42,10 +43,15 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private void frmNhanVien_Load(object sender, EventArgs e)
         {
+            DangKyValidationTxt(txtEmail, ValidateHelper.KiemTraEmail, "Email sai định dạng (ví dụ: abc@gmail.com)");
+            DangKyValidationTxt(txtSDT, ValidateHelper.KiemTraSoDienThoai, "SĐT phải có 10 số và bắt đầu bằng số 0");
+
+
             SetupGiaoDien(this);
 
             BatTatChucNang(false); // Mặc định khóa nhập liệu [cite: 74]
             LoadData();
+
         }
 
         private void LoadData()
@@ -62,7 +68,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
             cboMaChucVu.DisplayMember = "TenChucVu";
             cboMaChucVu.ValueMember = "MaChucVu";
 
-            // 3. Load danh sách nhân viên kèm theo bảng liên quan để hiển thị tên trên Grid
+            //Load danh sách nhân viên kèm theo bảng liên quan để hiển thị tên trên Grid
             var query = context.Nhan_Vien
                                 .Include(n => n.Phong_Ban)
                                 .Include(n => n.Chuc_Vu)
@@ -74,16 +80,16 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
             }
 
             var listNV = query.ToList();
-            // 2. Lưu kết quả vào biến _danhSachGoc
+            // Lưu kết quả vào biến _danhSachGoc
             _danhSachGoc = query.ToList();
 
             nvBindingSource.DataSource = context.Nhan_Vien.Local.ToBindingList();
             dataGridView.DataSource = nvBindingSource;
 
-            // 4. Thiết lập Binding
+            //Thiết lập Binding
             ThietLapBinding();
 
-            // 5. Cấu hình ẩn cột ID và cột quan hệ trên Grid
+            //Cấu hình ẩn cột ID và cột quan hệ trên Grid
             string[] colToHide = { "MaNhanVien", "Phong_Ban", "Chuc_Vu", "Tai_Khoan", "Chi_Tiet_Phan_Cong" };
             foreach (var col in colToHide)
             {
@@ -167,6 +173,13 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                 {
                     MessageBox.Show("Email không được để trống!");
                     txtEmail.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(txtSDT.Text))
+                {
+                    MessageBox.Show("Số điện thoại không được để trống!");
+                    txtSDT.Focus();
                     return;
                 }
 

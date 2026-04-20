@@ -1,6 +1,6 @@
 ﻿namespace Quan_Ly_Lich_Lam_Viec.Forms
 {
-    partial class frmBase
+    partial class frmInDonNghiPhep
     {
         /// <summary>
         /// Required designer variable.
@@ -28,22 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            reportViewer1 = new Microsoft.Reporting.WinForms.ReportViewer();
             SuspendLayout();
             // 
-            // frmBase
+            // reportViewer1
             // 
-            AutoScaleDimensions = new SizeF(9F, 23F);
+            reportViewer1.Dock = DockStyle.Fill;
+            reportViewer1.Location = new Point(0, 0);
+            reportViewer1.Name = "reportViewer1";
+            reportViewer1.ServerReport.BearerToken = null;
+            reportViewer1.Size = new Size(800, 450);
+            reportViewer1.TabIndex = 0;
+            // 
+            // frmInDonNghiPhep
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = SystemColors.Menu;
-            ClientSize = new Size(900, 518);
-            Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            KeyPreview = true;
-            Name = "frmBase";
-            Text = "frmBase";
-            Load += frmBase_Load;
+            ClientSize = new Size(800, 450);
+            Controls.Add(reportViewer1);
+            Name = "frmInDonNghiPhep";
+            Text = "In đơn nghỉ phép";
+            Load += frmInDonNghiPhep_Load;
             ResumeLayout(false);
         }
 
         #endregion
+
+        private Microsoft.Reporting.WinForms.ReportViewer reportViewer1;
     }
 }

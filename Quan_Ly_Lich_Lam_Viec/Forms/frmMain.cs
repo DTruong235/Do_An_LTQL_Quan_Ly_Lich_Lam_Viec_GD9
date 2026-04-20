@@ -1,35 +1,24 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Quan_Ly_Lich_Lam_Viec.Data;
 using Quan_Ly_Lich_Lam_Viec.GiaoDien;
+using Quan_Ly_Lich_Lam_Viec.Helper;
 using Quan_Ly_Lich_Lam_Viec.Reports;
 using System.Diagnostics;
 using BC = BCrypt.Net.BCrypt;
+using Path = System.IO.Path;
 
 namespace Quan_Ly_Lich_Lam_Viec.Forms
 {
-    public partial class frmMain : Form
+    public partial class frmMain : frmBase
     {
+
         Quan_Li_Lich_Lam_DbContext context = new Quan_Li_Lich_Lam_DbContext();
         string hoVaTenNhanVien = "";
         string tenDangNhap = "";
 
         frmDangNhap dangNhap = null;
-        frmDiaDiem diaDiem = null;
         frmDoiMatKhau doiMatKhau = null;
-        frmLichLamViec lichLamViec = null;
-        frmLoaiCongViec loaiCongViec = null;
-        frmNhanVien nhanVien = null;
-        frmPhanCong phanCong = null;
-        frmTaiKhoan taiKhoan = null;
-        frmTienDoCongViec tienDoCongViec = null;
-        frmThongKeTienDoCongViec thongKeTienDoCongViec = null;
-        frmThongKeLichLamViec thongKeLichLamViec = null;
-        frmThongKeChiTietCongViec thongKeChiTietCongViec = null;
-        frmThongKeLHieuSuatLamViec thongKeHieuSuatLamViec = null;
-        frmLichSuHeThong lichSuHeThong = null;
-        frmDashBoard dashboard = null;
-        frmCaiDat caiDat = null;
+
 
         public frmMain()
         {
@@ -57,6 +46,8 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
             mnuThongKeLichLamViec.Enabled = false;
             mnuThongKeTienDoCongViec.Enabled = false;
             mnuLichSuHeThong.Enabled = false;
+
+            pnlSidebar.Visible = false;
 
             lblTrangThai.Text = "Chưa đăng nhập.";
         }
@@ -108,6 +99,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                             else
                                 ChuaDangNhap();
                             DataHelper.WriteLog("Đăng nhập", $"Người dùng {Program.CurrentUser.Username} đã vào hệ thống.");
+                            pnlSidebar.Visible = true;
                             HienThiDashboard();
 
                         }
@@ -158,30 +150,19 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
             mnuTienDoCongViec.Enabled = true;
             mnuDoiMatKhau.Enabled = true;
 
+            btnNhanVien.Enabled = false;
+            btnTaiKhoan.Enabled = false;
+
+            btnThongKeChiTietCongViec.Enabled = false;
+            btnThongKeHieuSuatLamViec.Enabled = false;
+            btnThongKeLichLamViec.Enabled = false;
+            btnThongKeTienDoCongViec.Enabled = false;
             lblTrangThai.Text = "Nhân viên: " + hoVaTenNhanVien;
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            // 1. Load cấu hình từ file JSON
-            ThemeManager.LoadConfig();
-
-            // 2. Setup ảnh nền cho không gian làm việc của Form Main (MDI Client)
-            foreach (Control ctl in this.Controls)
-            {
-                if (ctl is MdiClient) // Tìm đúng cái tấm nền xám của Form Main
-                {
-                    ctl.BackColor = ThemeManager.Config.IsDarkMode ? Color.FromArgb(20, 20, 20) : Color.DarkGray;
-
-                    if (!string.IsNullOrEmpty(ThemeManager.Config.BackgroundImagePath) && File.Exists(ThemeManager.Config.BackgroundImagePath))
-                    {
-                        ctl.BackgroundImage = Image.FromFile(ThemeManager.Config.BackgroundImagePath);
-                        ctl.BackgroundImageLayout = ImageLayout.Stretch; // Hoặc Zoom tùy bạn
-                    }
-                    break;
-                }
-            }
-
+            SetupGiaoDien(this);
             ChuaDangNhap();
             DangNhap();
         }
@@ -194,9 +175,9 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
         private void mnuDangXuat_Click(object sender, EventArgs e)
         {
             DataHelper.WriteLog("Đăng xuất", $"Người dùng {Program.CurrentUser.Username} đã đăng xuất khỏi hệ thống.");
-            foreach (Form child in MdiChildren)
+            foreach (Form form in panelMain.Controls)
             {
-                child.Close();
+                form.Close();
             }
             ChuaDangNhap();
             DangNhap();
@@ -210,157 +191,76 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private void mnuDiaDiem_Click(object sender, EventArgs e)
         {
-            if (diaDiem == null || diaDiem.IsDisposed)
-            {
-                diaDiem = new frmDiaDiem();
-                diaDiem.MdiParent = this;
-                diaDiem.Show();
-            }
-            else
-                diaDiem.Activate();
+            OpenChildForm(new frmDiaDiem());
         }
 
         private void mnuLichLamViec_Click(object sender, EventArgs e)
         {
-            if (lichLamViec == null || lichLamViec.IsDisposed)
-            {
-                lichLamViec = new frmLichLamViec();
-                lichLamViec.MdiParent = this;
-                lichLamViec.Show();
-            }
-            else lichLamViec.Activate();
+            btnLichLamViec_Click(sender, e);
         }
 
         private void mnuPhanCong_Click(object sender, EventArgs e)
         {
-            if (phanCong == null || phanCong.IsDisposed)
-            {
-                phanCong = new frmPhanCong();
-                phanCong.MdiParent = this;
-                phanCong.Show();
-            }
-            else phanCong.Activate();
+            OpenChildForm(new frmPhanCong());
         }
 
         private void mnuNhanVien_Click(object sender, EventArgs e)
         {
-            if (nhanVien == null || nhanVien.IsDisposed)
-            {
-                nhanVien = new frmNhanVien();
-                nhanVien.MdiParent = this;
-                nhanVien.Show();
-            }
-            else nhanVien.Activate();
+            btnNhanVien_Click(sender, e);
         }
 
         private void mnuTaiKhoan_Click(object sender, EventArgs e)
         {
-            if (taiKhoan == null || taiKhoan.IsDisposed)
-            {
-                taiKhoan = new frmTaiKhoan();
-                taiKhoan.MdiParent = this;
-                taiKhoan.Show();
-            }
-            else taiKhoan.Activate();
+            btnTaiKhoan_Click(sender, e);
         }
 
         private void lblLienKet_Click_Click(object sender, EventArgs e)
         {
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = "explorer.exe";
-            info.Arguments = "https://fit.agu.edu.vn";
+            info.Arguments = "https://github.com/DTruong235/Do_An_LTQL_Quan_Ly_Lich_Lam_Viec_GD9";
             Process.Start(info);
         }
 
         private void mnuTienDoCongViec_Click(object sender, EventArgs e)
         {
-            if (tienDoCongViec == null || tienDoCongViec.IsDisposed)
-            {
-                tienDoCongViec = new frmTienDoCongViec();
-                tienDoCongViec.MdiParent = this;
-                tienDoCongViec.Show();
-            }
-            else tienDoCongViec.Activate();
+            OpenChildForm(new frmTienDoCongViec());
         }
 
         private void mnuThongKeTienDoCongViec_Click(object sender, EventArgs e)
         {
-            if (thongKeTienDoCongViec == null || thongKeTienDoCongViec.IsDisposed)
-            {
-                thongKeTienDoCongViec = new frmThongKeTienDoCongViec();
-                thongKeTienDoCongViec.MdiParent = this;
-                thongKeTienDoCongViec.Show();
-            }
-            else thongKeTienDoCongViec.Activate();
+            btnThongKeTienDoCongViec_Click(sender, e);
         }
 
         private void mnuThongKeLichLamViec_Click(object sender, EventArgs e)
         {
-            if (thongKeLichLamViec == null || thongKeLichLamViec.IsDisposed)
-            {
-                thongKeLichLamViec = new frmThongKeLichLamViec();
-                thongKeLichLamViec.MdiParent = this;
-                thongKeLichLamViec.Show();
-            }
-            else thongKeLichLamViec.Activate();
+            btnThongKeLichLamViec_Click(sender, e);
         }
 
         private void mnuThongKeChiTietCongViec_Click(object sender, EventArgs e)
         {
-            if (thongKeChiTietCongViec == null || thongKeChiTietCongViec.IsDisposed)
-            {
-                thongKeChiTietCongViec = new frmThongKeChiTietCongViec();
-                thongKeChiTietCongViec.MdiParent = this;
-                thongKeChiTietCongViec.Show();
-            }
-            else thongKeChiTietCongViec.Activate();
+            btnThongKeChiTietCongViec_Click(sender, e);
         }
 
         private void mnuThongKeHieuSuatLamViec_Click(object sender, EventArgs e)
         {
-            if (thongKeHieuSuatLamViec == null || thongKeHieuSuatLamViec.IsDisposed)
-            {
-                thongKeHieuSuatLamViec = new frmThongKeLHieuSuatLamViec();
-                thongKeHieuSuatLamViec.MdiParent = this;
-                thongKeHieuSuatLamViec.Show();
-            }
-            else thongKeHieuSuatLamViec.Activate();
+            btnThongKeHieuSuatLamViec_Click(sender, e);
         }
 
         private void mnuLichSuHeThong_Click(object sender, EventArgs e)
         {
-            if (lichSuHeThong == null || lichSuHeThong.IsDisposed)
-            {
-                lichSuHeThong = new frmLichSuHeThong();
-                lichSuHeThong.MdiParent = this;
-                lichSuHeThong.Show();
-            }
-            else lichSuHeThong.Activate();
+            OpenChildForm(new frmLichSuHeThong());
         }
 
         private void mnuLoaiCongViec_Click(object sender, EventArgs e)
         {
-            if (loaiCongViec == null || loaiCongViec.IsDisposed)
-            {
-                loaiCongViec = new frmLoaiCongViec();
-                loaiCongViec.MdiParent = this;
-                loaiCongViec.Show();
-            }
-            else loaiCongViec.Activate();
+            OpenChildForm(new frmLoaiCongViec());
         }
 
         private void HienThiDashboard()
         {
-            if (dashboard == null || dashboard.IsDisposed)
-            {
-                dashboard = new frmDashBoard();
-                dashboard.MdiParent = this;
-                dashboard.Show();
-            }
-            else
-            {
-                dashboard.Activate();
-            }
+            ActivateButton(btnDashboard);
+            OpenChildForm(new frmDashBoard());
         }
 
         private void mnuTrangChu_Click(object sender, EventArgs e)
@@ -375,12 +275,131 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
 
         private void mnuCauHinh_Click(object sender, EventArgs e)
         {
-            if (caiDat == null || caiDat.IsDisposed)
+            btnCaiDat_Click(sender, e);
+        }
+
+        private void mnuHDSD_Click(object sender, EventArgs e)
+        {
+            MoFileHuongDan();
+        }
+
+        private void MoFileHuongDan()
+        {
+            try
             {
-                caiDat = new frmCaiDat();
-                caiDat.Show();
+                // Trỏ đúng vào thư mục Help bạn đã tạo trong Project
+                string helpPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Help", "HDSD.html");
+
+                if (File.Exists(helpPath))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = helpPath,
+                        UseShellExecute = true // Yêu cầu Windows dùng trình duyệt mặc định
+                    });
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy file hướng dẫn tại: " + helpPath, "Thông báo");
+                }
             }
-            else caiDat.Activate();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi mở hướng dẫn: " + ex.Message);
+            }
+        }
+
+        private void OpenChildForm(Form childForm)
+        {
+            panelMain.Controls.Clear();
+            childForm.TopLevel = false;
+            childForm.FormBorderStyle = FormBorderStyle.None;
+            childForm.Dock = DockStyle.Fill;
+            panelMain.Controls.Add(childForm);
+            childForm.Show();
+        }
+
+
+        private void btnLichLamViec_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnLichLamViec);
+            OpenChildForm(new frmLichLamViec());
+        }
+
+        private void btnDashboard_Click(object sender, EventArgs e)
+        {
+            HienThiDashboard();
+        }
+
+        private void btnNhanVien_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnNhanVien);
+            OpenChildForm(new frmNhanVien());
+
+        }
+
+        private void btnCaiDat_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnCaiDat);
+            OpenChildForm(new frmCaiDat());
+        }
+
+        private void ActivateButton(Button btn)
+        {
+            if (currentButton != null)
+                currentButton.BackColor = PrimaryColor;
+
+            currentButton = btn;
+
+            btn.BackColor = ControlPaint.Dark(PrimaryColor, 0.2f);
+        }
+
+
+
+        private void btnTaiKhoan_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnTaiKhoan);
+            OpenChildForm(new frmTaiKhoan());
+        }
+
+        private void mnuNghiPhep_Click(object sender, EventArgs e)
+        {
+            btnDonNghiPhep_Click(sender, e);
+        }
+
+        private void btnDonNghiPhep_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnDonNghiPhep);
+            OpenChildForm(new frmDonNghiPhep());
+        }
+
+        private void btnThongKeLichLamViec_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnThongKeLichLamViec);
+
+        }
+
+        private void btnThongKeChiTietCongViec_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnThongKeChiTietCongViec);
+            OpenChildForm(new frmThongKeChiTietCongViec());
+        }
+
+        private void btnThongKeHieuSuatLamViec_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnThongKeHieuSuatLamViec);
+            OpenChildForm(new frmThongKeLHieuSuatLamViec());
+        }
+
+        private void btnThongKeTienDoCongViec_Click(object sender, EventArgs e)
+        {
+            ActivateButton(btnThongKeTienDoCongViec);
+            OpenChildForm(new frmThongKeTienDoCongViec());
+        }
+
+        private void btnDangXuat_Click(object sender, EventArgs e)
+        {
+            mnuDangXuat_Click(sender, e);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Data
         public DbSet<Dia_Diem> Dia_Diem { get; set; }
         public DbSet<Tien_Do_Cong_Viec> Tien_Do_Cong_Viec { get; set; }
         public virtual DbSet<Chi_Tiet_Cong_Viec> Chi_Tiet_Cong_Viecs { get; set; }
+        public DbSet<DonNghiPhep> DonNghiPheps { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

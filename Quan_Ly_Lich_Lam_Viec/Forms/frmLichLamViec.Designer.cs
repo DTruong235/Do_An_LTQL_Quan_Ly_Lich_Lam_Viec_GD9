@@ -69,6 +69,7 @@
             TinhTrang = new DataGridViewLinkColumn();
             grBoxDanhSachLog = new GroupBox();
             lstLog = new ListBox();
+            ((System.ComponentModel.ISupportInitialize)err).BeginInit();
             groupBox1.SuspendLayout();
             panel2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -191,6 +192,7 @@
             cboDiaDiem.Name = "cboDiaDiem";
             cboDiaDiem.Size = new Size(545, 25);
             cboDiaDiem.TabIndex = 26;
+            cboDiaDiem.SelectedIndexChanged += cboDiaDiem_SelectedIndexChanged;
             // 
             // cboLoaiCongViec
             // 
@@ -244,7 +246,7 @@
             label6.BackColor = Color.FromArgb(242, 242, 242);
             label6.Font = new Font("Roboto", 14F, FontStyle.Regular, GraphicsUnit.Pixel);
             label6.ForeColor = Color.FromArgb(222, 0, 0, 0);
-            label6.Location = new Point(365, 170);
+            label6.Location = new Point(365, 176);
             label6.Name = "label6";
             label6.Size = new Size(132, 18);
             label6.TabIndex = 20;
@@ -578,6 +580,7 @@
             Text = "Lịch làm việc";
             WindowState = FormWindowState.Maximized;
             Load += frmLichLamViec_Load;
+            ((System.ComponentModel.ISupportInitialize)err).EndInit();
             groupBox1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel2.PerformLayout();

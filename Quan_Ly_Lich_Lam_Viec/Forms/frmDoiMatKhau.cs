@@ -1,4 +1,5 @@
 ﻿using Quan_Ly_Lich_Lam_Viec.Data;
+using Quan_Ly_Lich_Lam_Viec.Helper;
 using BC = BCrypt.Net.BCrypt;
 
 namespace Quan_Ly_Lich_Lam_Viec.Forms

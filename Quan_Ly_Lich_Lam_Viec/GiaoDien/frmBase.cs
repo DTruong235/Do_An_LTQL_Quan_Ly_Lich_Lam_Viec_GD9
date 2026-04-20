@@ -8,7 +8,9 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
     public partial class frmBase : Form
     {
 
-        public HelpProvider hpToanCuc;
+        protected HelpProvider hpToanCuc;
+        protected ErrorProvider err;
+        protected Button currentButton = null;
 
         public frmBase()
         {
@@ -17,8 +19,8 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
             this.ShowIcon = false; // Tắt icon mặc định cho phẳng
 
             hpToanCuc = new HelpProvider();
-
-            hpToanCuc.HelpNamespace = "ĐƯỜNG_DẪN_TRANG_WEB_CỦA_BẠN_TRÊN_GITHUB";
+            err = new ErrorProvider();
+            err.BlinkStyle = ErrorBlinkStyle.NeverBlink;
         }
 
         // Đổi thành các biến động, sẽ được gán giá trị từ JSON
@@ -61,60 +63,80 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                     btn.FlatStyle = FlatStyle.Flat;
                     btn.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
                     btn.Cursor = Cursors.Hand;
-                    btn.BackColor = BackColorTheme;
-                    btn.FlatAppearance.BorderSize = 1;
 
-                    string name = btn.Name.ToLower();
+                    bool isSidebar = btn.Parent != null && btn.Parent.Name.ToLower().Contains("sidebar");
 
-                    // NHÓM 1: CÁC NÚT ĐẶC BIỆT ĐÃ THIẾT LẬP SẴN MÀU
-                    if (name.Contains("xoa"))
+                    // ===== BUTTON TRONG SIDEBAR =====
+                    if (isSidebar)
                     {
-                        btn.ForeColor = Color.Crimson;
-                        btn.FlatAppearance.BorderColor = Color.Crimson;
+                        btn.BackColor = PrimaryColor;
+                        btn.ForeColor = BackColorTheme;
+                        btn.FlatAppearance.BorderSize = 0;
+
+                        if (btn.Name.ToLower().Contains("dangxuat")) btn.ForeColor = Color.DarkRed;
+
+                        btn.FlatAppearance.MouseOverBackColor = ControlPaint.Dark(PrimaryColor, 0.1f);
+                        btn.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(PrimaryColor, 0.2f);
+
+                        btn.MouseEnter += (s, ev) =>
+                        {
+                            if (btn != currentButton)
+                                btn.BackColor = ControlPaint.Dark(PrimaryColor, 0.1f);
+                        };
+
+                        btn.MouseLeave += (s, ev) =>
+                        {
+                            if (btn != currentButton)
+                                btn.BackColor = PrimaryColor;
+                        };
                     }
-                    else if (name.Contains("thoat"))
-                    {
-                        btn.ForeColor = Color.Red;
-                        btn.FlatAppearance.BorderColor = Color.Red;
-                    }
-                    else if (name.Contains("them") || name.Contains("luu"))
-                    {
-                        btn.ForeColor = Color.SeaGreen;
-                        btn.FlatAppearance.BorderColor = Color.SeaGreen;
-                    }
-                    else if (name.Contains("sua"))
-                    {
-                        btn.ForeColor = Color.DarkOrange;
-                        btn.FlatAppearance.BorderColor = Color.DarkOrange;
-                    }
-                    else if (name.Contains("huy"))
-                    {
-                        btn.ForeColor = Color.DarkCyan;
-                        btn.FlatAppearance.BorderColor = Color.DarkCyan;
-                    }
-                    // NHÓM 2: CÁC NÚT CÒN LẠI (TÌM KIẾM, NHẬP, XUẤT...)
+
+                    // ===== BUTTON THƯỜNG =====
                     else
                     {
-                        btn.ForeColor = PrimaryColor;
-                        btn.FlatAppearance.BorderColor = PrimaryColor;
-                    }
-
-                    btn.FlatAppearance.MouseOverBackColor = btn.FlatAppearance.BorderColor;
-                    btn.FlatAppearance.MouseDownBackColor = btn.FlatAppearance.BorderColor;
-
-                    // Bắt sự kiện: Chuột đi VÀO nút
-                    btn.MouseEnter += (s, ev) =>
-                    {
-                        btn.ForeColor = Color.White; // Chữ auto chuyển sang Trắng cho nổi bật
-                    };
-
-                    // Bắt sự kiện: Chuột đi RA KHỎI nút
-                    btn.MouseLeave += (s, ev) =>
-                    {
-                        // Trả lại nền Dark/Light mode và trả lại màu chữ ban đầu
                         btn.BackColor = BackColorTheme;
-                        btn.ForeColor = btn.FlatAppearance.BorderColor;
-                    };
+                        btn.FlatAppearance.BorderSize = 1;
+
+                        string name = btn.Name.ToLower();
+                        Color originalColor;
+
+                        if (name.Contains("xoa") || name.Contains("tuchoi"))
+                            originalColor = Color.Crimson;
+                        else if (name.Contains("thoat"))
+                            originalColor = Color.Red;
+                        else if (name.Contains("them") || name.Contains("luu"))
+                            originalColor = Color.SeaGreen;
+                        else if (name.Contains("sua"))
+                            originalColor = Color.DarkOrange;
+                        else if (name.Contains("huy"))
+                            originalColor = Color.DarkCyan;
+                        else
+                            originalColor = PrimaryColor;
+
+                        btn.ForeColor = originalColor;
+                        btn.FlatAppearance.BorderColor = originalColor;
+
+                        btn.FlatAppearance.MouseOverBackColor = originalColor;
+                        btn.FlatAppearance.MouseDownBackColor = originalColor;
+
+                        btn.MouseEnter += (s, ev) =>
+                        {
+                            if (btn != currentButton)
+                            {
+                                btn.BackColor = originalColor;
+                                btn.ForeColor = Color.White;
+                            }
+                        };
+
+                        btn.MouseLeave += (s, ev) =>
+                        {
+                            if (btn != currentButton)
+                            {
+                                btn.BackColor = BackColorTheme;
+                                btn.ForeColor = originalColor;
+                            }
+                        };
+                    }
                 }
 
 
@@ -191,7 +213,23 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                 {
                     lbl.ForeColor = TextColorTheme;
                     lbl.BackColor = Color.Transparent;
-                    lbl.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular);
+
+                    string name = lbl.Name.ToLower();
+
+                    if (name.Contains("tong") || name.Contains("title"))
+                    {
+                        lbl.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+                        lbl.ForeColor = BackColorTheme;
+                    }
+                    else if (name.Contains("header"))
+                    {
+                        lbl.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+                        lbl.ForeColor = PrimaryColor;
+                    }
+                    else
+                    {
+                        lbl.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular);
+                    }
                 }
                 else if (ctrl is CheckBox chk)
                 {
@@ -219,8 +257,14 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                 // -- XỬ LÝ PANEL --
                 else if (ctrl is Panel pnl)
                 {
-                    // Bỏ qua không đổi màu mấy cái Thẻ (Card) trên Dashboard
-                    if (!pnl.Name.ToLower().Contains("card"))
+                    string name = pnl.Name.ToLower();
+
+                    if (name.Contains("sidebar"))
+                    {
+                        pnl.BackColor = PrimaryColor;
+                        pnl.ForeColor = TextColorTheme;
+                    }
+                    else if (!name.Contains("card"))
                     {
                         pnl.BackColor = BackColorTheme;
                         pnl.ForeColor = TextColorTheme;
@@ -230,8 +274,17 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                 // -- XỬ LÝ PICTUREBOX (HÌNH ẢNH) --
                 else if (ctrl is PictureBox pic)
                 {
-                    // Rất hữu ích khi hình ảnh của bạn là PNG nền trong suốt (logo, icon)
-                    pic.BackColor = BackColorTheme;
+                    pic.BackColor = Color.Transparent;
+                    bool isSidebar = pic.Parent != null && pic.Parent.Name.ToLower().Contains("sidebar");
+
+                    if (isSidebar)
+                    {
+                        pic.BackColor = PrimaryColor;
+                    }
+                    else
+                    {
+                        pic.BackColor = BackColorTheme;
+                    }
                 }
 
                 // -- XỬ LÝ BIỂU ĐỒ (CHART) --
@@ -284,6 +337,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
             }
         }
 
+
         private void frmBase_Load(object sender, EventArgs e)
         {
         }
@@ -328,5 +382,148 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
                 return false;
             }
         }
+
+        protected void DangKyValidationTxt(TextBox txt, Func<string, bool> checkFunc, string errorMsg)
+        {
+            // Khi đang gõ: Đổi màu nền
+            txt.TextChanged += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(txt.Text))
+                {
+                    txt.BackColor = Color.White;
+                    err.SetError(txt, "");
+                    return;
+                }
+
+                if (checkFunc(txt.Text))
+                {
+                    txt.BackColor = Color.White;
+                    err.SetError(txt, "");
+                }
+                else
+                {
+                    txt.BackColor = Color.MistyRose; // Màu đỏ nhạt
+                    err.SetError(txt, errorMsg);
+                }
+            };
+
+            // Khi rời đi: Khóa Focus nếu sai
+            txt.Validating += (s, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(txt.Text) && !checkFunc(txt.Text))
+                {
+                    e.Cancel = true; // Chặn không cho thoát ô này
+                }
+            };
+        }
+
+
+        protected void DangKyValidationCbo(ComboBox cbo, Func<bool> checkFunc, string errorMsg)
+        {
+            // Bắt sự kiện khi người dùng chọn một mục khác trong danh sách
+            cbo.SelectedIndexChanged += (s, e) =>
+            {
+                if (checkFunc())
+                {
+                    cbo.BackColor = Color.White;
+                    err.SetError(cbo, "");
+                }
+                else
+                {
+                    cbo.BackColor = Color.MistyRose;
+                    err.SetError(cbo, errorMsg);
+                }
+            };
+
+            // Khóa Focus nếu rời đi mà chưa chọn đúng
+            cbo.Validating += (s, e) =>
+            {
+                if (!checkFunc())
+                {
+                    e.Cancel = true;
+                }
+            };
+        }
+
+
+        protected void DangKyValidationNum(NumericUpDown num, Func<decimal, bool> checkFunc, string errorMsg)
+        {
+            // Bắt sự kiện khi con số thay đổi
+            num.ValueChanged += (s, e) =>
+            {
+                if (checkFunc(num.Value))
+                {
+                    num.BackColor = Color.White;
+                    err.SetError(num, "");
+                }
+                else
+                {
+                    num.BackColor = Color.MistyRose;
+                    err.SetError(num, errorMsg);
+                }
+            };
+
+            num.KeyUp += (s, e) =>
+            {
+                decimal giaTriDangGo = 0;
+                // Lấy cái chữ đang gõ ráng ép sang kiểu số. Nếu xóa rỗng thì mặc định là 0
+                if (!string.IsNullOrWhiteSpace(num.Text))
+                {
+                    decimal.TryParse(num.Text, out giaTriDangGo);
+                }
+                if (checkFunc(num.Value))
+                {
+                    num.BackColor = Color.White;
+                    err.SetError(num, "");
+                }
+                else
+                {
+                    num.BackColor = Color.MistyRose;
+                    err.SetError(num, errorMsg);
+                }
+            };
+
+            // Khóa Focus nếu rời đi mà con số không hợp lệ
+            num.Validating += (s, e) =>
+        {
+            if (!checkFunc(num.Value))
+            {
+                e.Cancel = true;
+            }
+        };
+        }
+
+        protected void DangKyValidationDate(DateTimePicker dtpBD, DateTimePicker dtpKT, Func<DateTime, DateTime, bool> checkFunc, string errorMsg)
+        {
+            // Tạo 1 hàm xử lý chung, vì sửa ô Bắt Đầu hay Kết Thúc thì cũng phải kiểm tra lại
+            void KiemTraHopLe(object sender, EventArgs e)
+            {
+                if (checkFunc(dtpBD.Value, dtpKT.Value))
+                {
+                    err.SetError(dtpKT, ""); // Hợp lệ -> Tắt cảnh báo
+                    err.SetError(dtpBD, "");
+                }
+                else
+                {
+                    // Sai -> Đặt icon cảnh báo (thường đặt ở ô Kết thúc cho dễ nhìn)
+                    err.SetError(dtpKT, errorMsg);
+                }
+            }
+            ;
+
+            // Gắn hàm kiểm tra vào sự kiện thay đổi của CẢ 2 Ô
+            dtpBD.ValueChanged += KiemTraHopLe;
+            dtpKT.ValueChanged += KiemTraHopLe;
+
+            // Khóa Focus khi rời khỏi ô Kết Thúc mà bị lỗi
+            dtpKT.Validating += (s, e) =>
+            {
+                if (!checkFunc(dtpBD.Value, dtpKT.Value))
+                {
+                    e.Cancel = true;
+                }
+            };
+        }
+
     }
 }

@@ -35,7 +35,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Data
         public virtual Tai_Khoan Tai_Khoan { get; set; }
         public virtual ObservableCollection<Chi_Tiet_Phan_Cong> Chi_Tiet_Phan_Cong { get; set; }
 
-
+        public virtual ObservableCollection<DonNghiPhep> DonNghiPheps { get; set; }
     }
 
 

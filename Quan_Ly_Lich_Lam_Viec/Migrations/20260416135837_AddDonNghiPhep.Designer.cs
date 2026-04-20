@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quan_Ly_Lich_Lam_Viec.Data;
 
@@ -11,9 +12,11 @@ using Quan_Ly_Lich_Lam_Viec.Data;
 namespace Quan_Ly_Lich_Lam_Viec.Migrations
 {
     [DbContext(typeof(Quan_Li_Lich_Lam_DbContext))]
-    partial class Quan_Li_Lich_Lam_DbContextModelSnapshot : ModelSnapshot
+    [Migration("20260416135837_AddDonNghiPhep")]
+    partial class AddDonNghiPhep
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

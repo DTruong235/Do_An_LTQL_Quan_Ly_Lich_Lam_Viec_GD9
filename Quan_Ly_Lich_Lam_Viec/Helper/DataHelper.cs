@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Quan_Ly_Lich_Lam_Viec.Data;
 
-namespace Quan_Ly_Lich_Lam_Viec.Data
+namespace Quan_Ly_Lich_Lam_Viec.Helper
 {
     static class DataHelper
     {
@@ -27,7 +28,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Data
 
             if (tatCaViec.Count > 0)
             {
-                int phanTram = (tatCaViec.Count(v => v.TrangThai == true) * 100) / tatCaViec.Count;
+                int phanTram = tatCaViec.Count(v => v.TrangThai == true) * 100 / tatCaViec.Count;
 
                 var tienDo = db.Tien_Do_Cong_Viec.FirstOrDefault(t => t.MaLich == maLich);
                 if (tienDo == null)
