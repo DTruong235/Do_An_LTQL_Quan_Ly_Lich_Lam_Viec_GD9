@@ -47,7 +47,6 @@ namespace Quan_Ly_Lich_Lam_Viec.Reports
                 reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DanhSachTienDoCongViec", (DataTable)dt));
 
                 string rptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "rptThongKeTienDoCongViec.rdlc");
-                rptPath = Path.GetFullPath(rptPath);
                 reportViewer.LocalReport.ReportPath = rptPath;
 
                 ReportParameter reportParameter = new ReportParameter("MoTaKetQuaHienThi", "(Tất cả tiến độ công việc)");

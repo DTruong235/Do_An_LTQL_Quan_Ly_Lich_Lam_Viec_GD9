@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Reports\rptThongKeTienDoCongViec.rdlc" />
+    <EmbeddedResource Include="Reports\rptThongKeTienDoCongViec.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +63,18 @@
     <None Update="Reports\Quan_Li_Lich_Lam_Viec_DataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Quan_Li_Lich_Lam_Viec_DataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Reports\rptDonNghiPhep.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\rptThongKeChiTietCongViec.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\rptThongKeHieuSuatLamViec.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\rptThongKeLichLamViec.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
