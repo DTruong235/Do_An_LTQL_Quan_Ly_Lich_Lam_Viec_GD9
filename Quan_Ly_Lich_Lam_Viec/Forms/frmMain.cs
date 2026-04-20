@@ -376,6 +376,7 @@ namespace Quan_Ly_Lich_Lam_Viec.Forms
         private void btnThongKeLichLamViec_Click(object sender, EventArgs e)
         {
             ActivateButton(btnThongKeLichLamViec);
+            OpenChildForm(new frmThongKeLichLamViec());
 
         }
 
